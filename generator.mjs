@@ -50,12 +50,12 @@ const SOURCES = {
 
 const manifest = {
   id: 'ro.documentare.oficiale.dan',
-  version: '1.2.0',
+  version: '1.3.0',
   name: 'Documentare RO Oficiale',
   description: 'Documentare și emisiuni factuale din surse oficiale: ARTE, National Geographic România, Discovery România, ID/Crime și HISTORY România.',
   resources: ['catalog','meta','stream'],
   types: ['movie'],
-  idPrefixes: ['docro:'],
+  idPrefixes: ['docro_'],
   catalogs: Object.values(SOURCES).map(s => ({
     type: 'movie',
     id: s.catalogId,
@@ -121,7 +121,7 @@ function wrapTitle(title, max = 26, lines = 5) {
 }
 
 async function makePoster(item, source) {
-  const posterRel = `posters/${encodeURIComponent(item.id)}.jpg`;
+  const posterRel = `posters/${item.id}.jpg`;
   const posterPath = path.join(OUT, posterRel);
   await fs.mkdir(path.dirname(posterPath), { recursive: true });
 
@@ -202,7 +202,7 @@ async function fetchSource(key, source) {
   const feedUrl = await resolveFeedUrl(source);
   const r = await fetch(feedUrl, {
     headers: {
-      'User-Agent':'DocumentareRO-Stremio/1.1',
+      'User-Agent':'DocumentareRO-Stremio/1.3',
       'Accept':'application/atom+xml,application/xml,text/xml,*/*'
     }
   });
@@ -223,7 +223,7 @@ async function fetchSource(key, source) {
     if (source.exclude && source.exclude.test(haystack)) return null;
 
     const published = e?.published || e?.updated;
-    const id = `docro:${key}:${videoId}`;
+    const id = `docro_${key}_${videoId}`;
 
     return {
       id,
@@ -261,13 +261,20 @@ for (const [key, source] of Object.entries(SOURCES)) {
 
     for (const item of items) {
       const {videoId, originalThumb, ...meta} = item;
-      await writeJson(`meta/movie/${encodeURIComponent(item.id)}.json`, {meta});
-      await writeJson(`stream/movie/${encodeURIComponent(item.id)}.json`, {
-        streams: [{
-          ytId: videoId,
-          name: 'Documentare RO',
-          title: `${source.sourceName} • sursă oficială`
-        }]
+      await writeJson(`meta/movie/${item.id}.json`, {meta});
+      await writeJson(`stream/movie/${item.id}.json`, {
+        streams: [
+          {
+            ytId: videoId,
+            name: 'YouTube • redare directă',
+            description: `${source.sourceName} • sursă oficială`
+          },
+          {
+            externalUrl: `https://www.youtube.com/watch?v=${videoId}`,
+            name: 'YouTube • deschide extern',
+            description: 'Variantă de rezervă dacă playerul YouTube din Stremio nu pornește.'
+          }
+        ]
       });
     }
     console.log(`${source.sourceName}: ${items.length} materiale`);
