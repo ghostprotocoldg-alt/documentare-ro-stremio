@@ -1,8 +1,10 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { XMLParser } from 'fast-xml-parser';
+import sharp from 'sharp';
 
 const OUT = 'dist';
+const PUBLIC_BASE = 'https://raw.githubusercontent.com/ghostprotocoldg-alt/documentare-ro-stremio/static';
 
 const SOURCES = {
   arte: {
@@ -48,7 +50,7 @@ const SOURCES = {
 
 const manifest = {
   id: 'ro.documentare.oficiale.dan',
-  version: '1.1.0',
+  version: '1.2.0',
   name: 'Documentare RO Oficiale',
   description: 'Documentare și emisiuni factuale din surse oficiale: ARTE, National Geographic România, Discovery România, ID/Crime și HISTORY România.',
   resources: ['catalog','meta','stream'],
@@ -57,7 +59,11 @@ const manifest = {
   catalogs: Object.values(SOURCES).map(s => ({
     type: 'movie',
     id: s.catalogId,
-    name: s.catalogName
+    name: s.catalogName,
+    extra: [{ name: 'skip' }],
+    extraSupported: ['skip'],
+    extraRequired: [],
+    posterShape: 'poster'
   }))
 };
 
@@ -89,6 +95,90 @@ function thumb(media, videoId) {
   const ts = arr(media?.['media:thumbnail']).filter(Boolean);
   ts.sort((a,b) => Number(b?.['@_width']||0)-Number(a?.['@_width']||0));
   return ts[0]?.['@_url'] || `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+}
+
+function escapeXml(s) {
+  return String(s || '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&apos;');
+}
+
+function wrapTitle(title, max = 26, lines = 5) {
+  const words = String(title || '').split(/\s+/).filter(Boolean);
+  const out = [];
+  let row = '';
+  for (const word of words) {
+    const candidate = row ? row + ' ' + word : word;
+    if (candidate.length > max && row) {
+      out.push(row);
+      row = word;
+      if (out.length >= lines - 1) break;
+    } else {
+      row = candidate;
+    }
+  }
+  if (row && out.length < lines) out.push(row);
+  return out;
+}
+
+async function makePoster(item, source) {
+  const posterRel = `posters/${encodeURIComponent(item.id)}.jpg`;
+  const posterPath = path.join(OUT, posterRel);
+  await fs.mkdir(path.dirname(posterPath), { recursive: true });
+
+  const candidates = [
+    `https://i.ytimg.com/vi/${item.videoId}/maxresdefault.jpg`,
+    item.originalThumb,
+    `https://i.ytimg.com/vi/${item.videoId}/hqdefault.jpg`
+  ].filter(Boolean);
+
+  let buf = null;
+  for (const url of candidates) {
+    try {
+      const r = await fetch(url, { headers: {'User-Agent':'Mozilla/5.0'} });
+      if (r.ok) {
+        const ct = r.headers.get('content-type') || '';
+        if (ct.startsWith('image/')) {
+          buf = Buffer.from(await r.arrayBuffer());
+          if (buf.length > 5000) break;
+        }
+      }
+    } catch {}
+  }
+  if (!buf) return item.originalThumb;
+
+  const titleLines = wrapTitle(item.name);
+  const titleSvg = titleLines.map((line, i) =>
+    `<text x="46" y="${600 + i*57}" font-family="Arial, Helvetica, sans-serif" font-size="43" font-weight="700" fill="white">${escapeXml(line)}</text>`
+  ).join('');
+
+  const svg = Buffer.from(`
+    <svg width="600" height="900" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#000" stop-opacity="0.05"/>
+          <stop offset="48%" stop-color="#000" stop-opacity="0.15"/>
+          <stop offset="100%" stop-color="#000" stop-opacity="0.92"/>
+        </linearGradient>
+      </defs>
+      <rect width="600" height="900" fill="url(#g)"/>
+      <rect x="32" y="40" width="250" height="48" rx="18" fill="#000" fill-opacity="0.72"/>
+      <text x="52" y="72" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" fill="white">${escapeXml(source.sourceName)}</text>
+      ${titleSvg}
+    </svg>
+  `);
+
+  await sharp(buf)
+    .resize(600, 900, { fit: 'cover', position: 'centre' })
+    .modulate({ brightness: 0.82, saturation: 0.9 })
+    .composite([{ input: svg, top: 0, left: 0 }])
+    .jpeg({ quality: 88, mozjpeg: true })
+    .toFile(posterPath);
+
+  return `${PUBLIC_BASE}/${posterRel}`;
 }
 
 async function resolveFeedUrl(source) {
@@ -143,7 +233,8 @@ async function fetchSource(key, source) {
       id,
       type:'movie',
       name:title,
-      poster: thumb(media, videoId),
+      poster: null,
+      originalThumb: thumb(media, videoId),
       background: `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`,
       description: `${description}${description ? '\n\n' : ''}Sursă oficială: ${source.sourceName}; ${source.languageNote}.`,
       releaseInfo: published ? String(new Date(published).getFullYear()) : undefined,
@@ -161,15 +252,18 @@ const sourceStatus = [];
 for (const [key, source] of Object.entries(SOURCES)) {
   try {
     const items = await fetchSource(key, source);
+    for (const item of items) {
+      item.poster = await makePoster(item, source);
+    }
     total += items.length;
     sourceStatus.push({source: source.sourceName, items: items.length, ok: true});
 
     await writeJson(`catalog/movie/${source.catalogId}.json`, {
-      metas: items.map(({videoId, ...x}) => x)
+      metas: items.map(({videoId, originalThumb, ...x}) => x)
     });
 
     for (const item of items) {
-      const {videoId, ...meta} = item;
+      const {videoId, originalThumb, ...meta} = item;
       await writeJson(`meta/movie/${encodeURIComponent(item.id)}.json`, {meta});
       await writeJson(`stream/movie/${encodeURIComponent(item.id)}.json`, {
         streams: [{
