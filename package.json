@@ -1,0 +1,12 @@
+{
+  "name": "documentare-ro-stremio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate": "node generator.mjs"
+  },
+  "dependencies": {
+    "fast-xml-parser": "^5.2.5"
+  }
+}
