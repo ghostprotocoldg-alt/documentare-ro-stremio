@@ -24,7 +24,8 @@ const SOURCES = {
     catalogName: 'Discovery România',
     feedUrl: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCPo3-X59Kr9MP6iaA7BZWow',
     sourceName: 'Discovery România',
-    languageNote: 'versiune publicată pentru România'
+    languageNote: 'versiune publicată pentru România',
+    exclude: /#shorts|\bshorts?\b/i
   },
   id: {
     catalogId: 'id_crime_romania',
@@ -32,14 +33,16 @@ const SOURCES = {
     feedUrl: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCPo3-X59Kr9MP6iaA7BZWow',
     sourceName: 'Discovery România — selecție ID / Crime',
     languageNote: 'titluri și prezentare în română',
-    filter: /(crim|ucis|ucide|omor|asasin|cadav|criminal|poliț|politie|jaf|jefuit|răpit|rapit|dispăr|dispar|anchet|investiga|detectiv|mister|body cam|homicid|cocain|contraband|drog)/i
+    filter: /(crim|ucis|ucide|omor|asasin|cadav|criminal|poliț|politie|jaf|jefuit|răpit|rapit|dispăr|dispar|anchet|investiga|detectiv|mister|body cam|homicid|cocain|contraband|drog)/i,
+    exclude: /#shorts|\bshorts?\b/i
   },
   history: {
     catalogId: 'history_romania',
     catalogName: 'HISTORY România',
     channelPageUrl: 'https://www.youtube.com/@HISTORYRomania',
     sourceName: 'HISTORY România',
-    languageNote: 'conținut publicat pentru România'
+    languageNote: 'conținut publicat pentru România',
+    exclude: /#shorts|\bshorts?\b/i
   }
 };
 
@@ -131,6 +134,7 @@ async function fetchSource(key, source) {
     const haystack = `${title}\n${description}`;
 
     if (source.filter && !source.filter.test(haystack)) return null;
+    if (source.exclude && source.exclude.test(haystack)) return null;
 
     const published = e?.published || e?.updated;
     const id = `docro:${key}:${videoId}`;
