@@ -59,11 +59,7 @@ const manifest = {
   catalogs: Object.values(SOURCES).map(s => ({
     type: 'movie',
     id: s.catalogId,
-    name: s.catalogName,
-    extra: [{ name: 'skip' }],
-    extraSupported: ['skip'],
-    extraRequired: [],
-    posterShape: 'poster'
+    name: s.catalogName
   }))
 };
 
@@ -152,11 +148,11 @@ async function makePoster(item, source) {
 
   const titleLines = wrapTitle(item.name);
   const titleSvg = titleLines.map((line, i) =>
-    `<text x="46" y="${600 + i*57}" font-family="Arial, Helvetica, sans-serif" font-size="43" font-weight="700" fill="white">${escapeXml(line)}</text>`
+    `<text x="28" y="${392 + i*38}" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" fill="white">${escapeXml(line)}</text>`
   ).join('');
 
   const svg = Buffer.from(`
-    <svg width="600" height="900" xmlns="http://www.w3.org/2000/svg">
+    <svg width="400" height="593" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stop-color="#000" stop-opacity="0.05"/>
@@ -164,18 +160,18 @@ async function makePoster(item, source) {
           <stop offset="100%" stop-color="#000" stop-opacity="0.92"/>
         </linearGradient>
       </defs>
-      <rect width="600" height="900" fill="url(#g)"/>
-      <rect x="32" y="40" width="250" height="48" rx="18" fill="#000" fill-opacity="0.72"/>
-      <text x="52" y="72" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" fill="white">${escapeXml(source.sourceName)}</text>
+      <rect width="400" height="593" fill="url(#g)"/>
+      <rect x="20" y="24" width="260" height="38" rx="14" fill="#000" fill-opacity="0.72"/>
+      <text x="34" y="50" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" fill="white">${escapeXml(source.sourceName)}</text>
       ${titleSvg}
     </svg>
   `);
 
   await sharp(buf)
-    .resize(600, 900, { fit: 'cover', position: 'centre' })
+    .resize(400, 593, { fit: 'cover', position: 'centre' })
     .modulate({ brightness: 0.82, saturation: 0.9 })
     .composite([{ input: svg, top: 0, left: 0 }])
-    .jpeg({ quality: 88, mozjpeg: true })
+    .jpeg({ quality: 70, mozjpeg: true })
     .toFile(posterPath);
 
   return `${PUBLIC_BASE}/${posterRel}`;
@@ -234,6 +230,7 @@ async function fetchSource(key, source) {
       type:'movie',
       name:title,
       poster: null,
+      posterShape: 'poster',
       originalThumb: thumb(media, videoId),
       background: `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`,
       description: `${description}${description ? '\n\n' : ''}Sursă oficială: ${source.sourceName}; ${source.languageNote}.`,
