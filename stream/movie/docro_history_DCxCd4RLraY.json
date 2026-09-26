@@ -1,0 +1,14 @@
+{
+  "streams": [
+    {
+      "ytId": "DCxCd4RLraY",
+      "name": "YouTube • redare directă",
+      "description": "HISTORY România • sursă oficială"
+    },
+    {
+      "externalUrl": "https://www.youtube.com/watch?v=DCxCd4RLraY",
+      "name": "YouTube • deschide extern",
+      "description": "Variantă de rezervă dacă playerul YouTube din Stremio nu pornește."
+    }
+  ]
+}

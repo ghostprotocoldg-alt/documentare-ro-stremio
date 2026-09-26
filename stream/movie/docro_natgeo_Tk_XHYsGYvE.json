@@ -1,0 +1,14 @@
+{
+  "streams": [
+    {
+      "ytId": "Tk_XHYsGYvE",
+      "name": "YouTube • redare directă",
+      "description": "National Geographic România • sursă oficială"
+    },
+    {
+      "externalUrl": "https://www.youtube.com/watch?v=Tk_XHYsGYvE",
+      "name": "YouTube • deschide extern",
+      "description": "Variantă de rezervă dacă playerul YouTube din Stremio nu pornește."
+    }
+  ]
+}

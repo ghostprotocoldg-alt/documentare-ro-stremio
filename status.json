@@ -1,0 +1,31 @@
+{
+  "generatedAt": "2026-09-26T18:31:36.101Z",
+  "totalItems": 57,
+  "sources": [
+    {
+      "source": "ARTE.tv Documentare",
+      "items": 15,
+      "ok": true
+    },
+    {
+      "source": "National Geographic România",
+      "items": 15,
+      "ok": true
+    },
+    {
+      "source": "Discovery România",
+      "items": 9,
+      "ok": true
+    },
+    {
+      "source": "Discovery România — selecție ID / Crime",
+      "items": 3,
+      "ok": true
+    },
+    {
+      "source": "HISTORY România",
+      "items": 15,
+      "ok": true
+    }
+  ]
+}

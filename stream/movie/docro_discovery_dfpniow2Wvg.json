@@ -1,0 +1,14 @@
+{
+  "streams": [
+    {
+      "ytId": "dfpniow2Wvg",
+      "name": "YouTube • redare directă",
+      "description": "Discovery România • sursă oficială"
+    },
+    {
+      "externalUrl": "https://www.youtube.com/watch?v=dfpniow2Wvg",
+      "name": "YouTube • deschide extern",
+      "description": "Variantă de rezervă dacă playerul YouTube din Stremio nu pornește."
+    }
+  ]
+}
