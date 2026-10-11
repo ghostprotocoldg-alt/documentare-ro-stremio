@@ -1,0 +1,36 @@
+{
+  "generatedAt": "2026-10-11T00:42:51.948Z",
+  "totalItems": 0,
+  "sources": [
+    {
+      "source": "ARTE.tv Documentare",
+      "items": 0,
+      "ok": false,
+      "error": "ARTE.tv Documentare: HTTP 404"
+    },
+    {
+      "source": "National Geographic România",
+      "items": 0,
+      "ok": false,
+      "error": "National Geographic România: HTTP 404"
+    },
+    {
+      "source": "Discovery România",
+      "items": 0,
+      "ok": false,
+      "error": "Discovery România: HTTP 404"
+    },
+    {
+      "source": "Discovery România — selecție ID / Crime",
+      "items": 0,
+      "ok": false,
+      "error": "Discovery România — selecție ID / Crime: HTTP 404"
+    },
+    {
+      "source": "HISTORY România",
+      "items": 0,
+      "ok": false,
+      "error": "HISTORY România: HTTP 404"
+    }
+  ]
+}
