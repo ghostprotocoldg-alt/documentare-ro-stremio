@@ -1,0 +1,14 @@
+{
+  "streams": [
+    {
+      "ytId": "eYUF3L7gf44",
+      "name": "YouTube • redare directă",
+      "description": "ARTE.tv Documentare • sursă oficială"
+    },
+    {
+      "externalUrl": "https://www.youtube.com/watch?v=eYUF3L7gf44",
+      "name": "YouTube • deschide extern",
+      "description": "Variantă de rezervă dacă playerul YouTube din Stremio nu pornește."
+    }
+  ]
+}
