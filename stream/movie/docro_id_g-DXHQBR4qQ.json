@@ -1,0 +1,14 @@
+{
+  "streams": [
+    {
+      "ytId": "g-DXHQBR4qQ",
+      "name": "YouTube • redare directă",
+      "description": "Discovery România — selecție ID / Crime • sursă oficială"
+    },
+    {
+      "externalUrl": "https://www.youtube.com/watch?v=g-DXHQBR4qQ",
+      "name": "YouTube • deschide extern",
+      "description": "Variantă de rezervă dacă playerul YouTube din Stremio nu pornește."
+    }
+  ]
+}
