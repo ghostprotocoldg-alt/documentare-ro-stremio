@@ -1,0 +1,44 @@
+{
+  "id": "ro.documentare.oficiale.dan",
+  "version": "1.3.0",
+  "name": "Documentare RO Oficiale",
+  "description": "Documentare și emisiuni factuale din surse oficiale: ARTE, National Geographic România, Discovery România, ID/Crime și HISTORY România.",
+  "resources": [
+    "catalog",
+    "meta",
+    "stream"
+  ],
+  "types": [
+    "movie"
+  ],
+  "idPrefixes": [
+    "docro_"
+  ],
+  "catalogs": [
+    {
+      "type": "movie",
+      "id": "arte_documentare_ro",
+      "name": "ARTE.tv Documentare — Română"
+    },
+    {
+      "type": "movie",
+      "id": "natgeo_documentare_ro",
+      "name": "National Geographic România — Documentare integrale"
+    },
+    {
+      "type": "movie",
+      "id": "discovery_romania",
+      "name": "Discovery România"
+    },
+    {
+      "type": "movie",
+      "id": "id_crime_romania",
+      "name": "ID / Crime — Română"
+    },
+    {
+      "type": "movie",
+      "id": "history_romania",
+      "name": "HISTORY România"
+    }
+  ]
+}
