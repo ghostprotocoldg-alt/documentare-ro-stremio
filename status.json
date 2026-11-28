@@ -1,0 +1,36 @@
+{
+  "generatedAt": "2026-11-28T07:54:21.527Z",
+  "totalItems": 0,
+  "sources": [
+    {
+      "source": "ARTE.tv Documentare",
+      "items": 0,
+      "ok": false,
+      "error": "ARTE.tv Documentare: HTTP 503"
+    },
+    {
+      "source": "National Geographic România",
+      "items": 0,
+      "ok": false,
+      "error": "National Geographic România: HTTP 503"
+    },
+    {
+      "source": "Discovery România",
+      "items": 0,
+      "ok": false,
+      "error": "Discovery România: HTTP 503"
+    },
+    {
+      "source": "Discovery România — selecție ID / Crime",
+      "items": 0,
+      "ok": false,
+      "error": "Discovery România — selecție ID / Crime: HTTP 503"
+    },
+    {
+      "source": "HISTORY România",
+      "items": 0,
+      "ok": false,
+      "error": "HISTORY România: HTTP 503"
+    }
+  ]
+}
